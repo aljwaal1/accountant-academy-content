@@ -1,0 +1,38 @@
+name: Merge Academy Content V20 Run6
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - pending/merge_academy_content_v20_run6.py
+      - .github/workflows/merge-academy-content-v20-run6.yml
+
+permissions:
+  contents: write
+
+jobs:
+  merge-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge new lessons into academy_content.json
+        run: python pending/merge_academy_content_v20_run6.py
+
+      - name: Validate JSON
+        run: python -m json.tool academy_content.json > /tmp/academy_content_validated.json
+
+      - name: Commit updated academy_content.json
+        run: |
+          if git diff --quiet academy_content.json; then
+            echo "No academy_content.json changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add academy_content.json
+          git commit -m "Update academy content to v20 with 10 new lessons"
+          git push
