@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "driveFolder": "https://drive.google.com/drive/folders/1oFVi7o82Zcp1Xj4bXFUVS25xIKkJ-2Nm",
+  "updatedAt": "2026-07-17",
+  "references": [
+    {
+      "id": "COST-01",
+      "title": "Horngren's Cost Accounting: A Managerial Emphasis",
+      "driveFileId": "1Qa8XiAl4bRNn-yFCLMWVpQEndCprPMa1",
+      "tracks": ["cost_accounting", "managerial_accounting", "cma"],
+      "type": "university_textbook",
+      "priority": "primary",
+      "status": "available"
+    },
+    {
+      "id": "FIN-SOL-01",
+      "title": "Solutions for Financial Accounting",
+      "driveFileId": "110ZYWDJSaJFsdVN_3sEIyEFyFZZIZLO-",
+      "tracks": ["financial_accounting"],
+      "type": "solutions_archive",
+      "priority": "supporting",
+      "status": "available",
+      "usageNote": "يستخدم للتحقق من الحلول والأمثلة فقط، ولا يعتمد عليه وحده لشرح المفاهيم."
+    },
+    {
+      "id": "COST-02",
+      "title": "Cost and Management Accounting - Colin Drury (2020)",
+      "driveFileId": "1njb5RW21orv6ovbrlxTR_2qw_5bgkvIq",
+      "tracks": ["cost_accounting", "managerial_accounting", "cma"],
+      "type": "university_textbook",
+      "priority": "primary",
+      "status": "available"
+    },
+    {
+      "id": "ADV-01",
+      "title": "Advanced Financial Accounting: An IFRS Standards Approach",
+      "driveFileId": "1drjFnWV54iHUkLibC8Ef_9bXdQVKp9If",
+      "tracks": ["advanced_accounting", "ifrs"],
+      "type": "university_textbook",
+      "priority": "primary",
+      "status": "available"
+    },
+    {
+      "id": "IFRS-AR-01",
+      "title": "المعايير المحاسبية الدولية ومعايير الإبلاغ المالي الدولية",
+      "driveFileId": "1m_q59yNFOJC_zchpp8ONNuDqxMWwfkxF",
+      "tracks": ["ifrs"],
+      "type": "arabic_reference",
+      "priority": "supporting",
+      "status": "available",
+      "usageNote": "يستخدم للتوضيح العربي، مع تفضيل المرجع الرسمي أو المرجع الإنجليزي الأحدث عند التعارض."
+    },
+    {
+      "id": "FIN-AR-01",
+      "title": "المحاسبة المالية - سعود العامري",
+      "driveFileId": "1Ewr2pY_zWY1g8dfbqK7S3S8rQFueHh75",
+      "tracks": ["financial_accounting", "accounting_principles"],
+      "type": "arabic_university_textbook",
+      "priority": "primary",
+      "status": "available"
+    },
+    {
+      "id": "INT-01",
+      "title": "Intermediate Accounting, IFRS Edition, 4e",
+      "driveFileId": "1j5Dy5vYFQ9w6AyA2w6fT83Me-tS7j6Pv",
+      "tracks": ["intermediate_accounting", "ifrs", "financial_accounting"],
+      "type": "university_textbook",
+      "priority": "primary",
+      "status": "available"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+import argparse
+import json
+import subprocess
+import sys
+from collections import Counter
+from pathlib import Path
+
+CONTENT = Path('academy_content.json')
+REGISTRY = Path('quality/REFERENCE_REGISTRY.json')
+
+errors = []
+warnings = []
+
+
+def fail(message):
+    errors.append(message)
+
+
+def warn(message):
+    warnings.append(message)
+
+
+def load_json(path):
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except FileNotFoundError:
+        fail(f'Missing file: {path}')
+    except json.JSONDecodeError as exc:
+        fail(f'Invalid JSON in {path}: {exc}')
+    return {}
+
+
+def load_base_content(base_ref):
+    if not base_ref:
+        return {}
+    candidates = [base_ref, f'origin/{base_ref}']
+    for candidate in candidates:
+        try:
+            raw = subprocess.check_output(
+                ['git', 'show', f'{candidate}:academy_content.json'],
+                text=True,
+                encoding='utf-8',
+            )
+            return json.loads(raw)
+        except (subprocess.CalledProcessError, json.JSONDecodeError):
+            continue
+    warn(f'Could not load base content from {base_ref}')
+    return {}
+
+
+def collect_lesson_ids(data):
+    ids = set()
+    for track in data.get('tracks', []):
+        if not isinstance(track, dict):
+            continue
+        for lesson in track.get('lessons', []):
+            if isinstance(lesson, dict) and lesson.get('id'):
+                ids.add(str(lesson['id']).strip())
+    return ids
+
+
+def collect_track_titles(data):
+    result = set()
+    for track in data.get('tracks', []):
+        if not isinstance(track, dict):
+            continue
+        track_id = str(track.get('id', '')).strip()
+        for lesson in track.get('lessons', []):
+            if isinstance(lesson, dict):
+                title = str(lesson.get('title', '')).strip().casefold()
+                if title:
+                    result.add((track_id, title))
+    return result
+
+
+def report(message, strict):
+    if strict:
+        fail(message)
+    else:
+        warn(f'LEGACY: {message}')
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--base-ref', default='')
+args = parser.parse_args()
+
+content = load_json(CONTENT)
+registry = load_json(REGISTRY)
+base_content = load_base_content(args.base_ref)
+base_lesson_ids = collect_lesson_ids(base_content)
+base_track_titles = collect_track_titles(base_content)
+
+if not isinstance(content.get('tracks'), list):
+    fail('academy_content.json must contain a tracks array')
+
+reference_ids = {
+    item.get('id')
+    for item in registry.get('references', [])
+    if isinstance(item, dict) and item.get('id')
+}
+if not reference_ids:
+    fail('Reference registry contains no valid references')
+
+lesson_ids = []
+lesson_titles = []
+question_texts = []
+answer_counts = Counter()
+new_lesson_count = 0
+
+for track_index, track in enumerate(content.get('tracks', [])):
+    if not isinstance(track, dict):
+        fail(f'Track #{track_index + 1} is not an object')
+        continue
+    track_id = str(track.get('id', '')).strip()
+    if not track_id:
+        fail(f'Track #{track_index + 1} has no id')
+    if not str(track.get('title', '')).strip():
+        fail(f'Track {track_id or track_index + 1} has no title')
+    lessons = track.get('lessons')
+    if not isinstance(lessons, list):
+        fail(f'Track {track_id} has no lessons array')
+        continue
+
+    for lesson_index, lesson in enumerate(lessons):
+        prefix = f'{track_id}/lesson#{lesson_index + 1}'
+        if not isinstance(lesson, dict):
+            fail(f'{prefix} is not an object')
+            continue
+
+        lesson_id = str(lesson.get('id', '')).strip()
+        title = str(lesson.get('title', '')).strip()
+        strict = not base_lesson_ids or lesson_id not in base_lesson_ids
+        if strict:
+            new_lesson_count += 1
+
+        if not lesson_id:
+            fail(f'{prefix} has no id')
+        else:
+            lesson_ids.append(lesson_id)
+        if not title:
+            fail(f'{prefix} has no title')
+        else:
+            lesson_titles.append((track_id, title.casefold()))
+
+        summary = lesson.get('summary')
+        if not isinstance(summary, list) or len(summary) < 3:
+            report(f'{prefix} must have at least 3 summary points', strict)
+        elif any(not str(item).strip() for item in summary):
+            report(f'{prefix} has an empty summary point', strict)
+
+        long_explanation = lesson.get('longExplanation')
+        if not isinstance(long_explanation, list) or len(long_explanation) < 4:
+            report(f'{prefix} must have at least 4 longExplanation paragraphs', strict)
+        elif any(len(str(item).strip()) < 40 for item in long_explanation):
+            warn(f'{prefix} contains a very short explanation paragraph')
+
+        questions = lesson.get('questions')
+        if not isinstance(questions, list) or len(questions) < 5:
+            report(f'{prefix} must have at least 5 questions', strict)
+            if not isinstance(questions, list):
+                continue
+
+        consecutive_answer = None
+        consecutive_count = 0
+        local_answers = Counter()
+
+        for question_index, question in enumerate(questions):
+            qprefix = f'{prefix}/question#{question_index + 1}'
+            if not isinstance(question, dict):
+                report(f'{qprefix} is not an object', strict)
+                continue
+            qtext = str(question.get('q', '')).strip()
+            options = question.get('options')
+            answer = question.get('answer')
+            explanation = str(question.get('explanation', '')).strip()
+
+            if not qtext:
+                report(f'{qprefix} has no question text', strict)
+            else:
+                question_texts.append(qtext.casefold())
+            if not isinstance(options, list) or len(options) != 4:
+                report(f'{qprefix} must have exactly 4 options', strict)
+            elif len({str(option).strip().casefold() for option in options}) != 4:
+                report(f'{qprefix} contains duplicate options', strict)
+            if not isinstance(answer, int) or answer not in range(4):
+                report(f'{qprefix} answer must be an integer from 0 to 3', strict)
+            else:
+                answer_counts[answer] += 1
+                local_answers[answer] += 1
+                if answer == consecutive_answer:
+                    consecutive_count += 1
+                else:
+                    consecutive_answer = answer
+                    consecutive_count = 1
+                if consecutive_count > 3:
+                    report(f'{qprefix} creates more than 3 identical answer positions in a row', strict)
+            if len(explanation) < 20:
+                report(f'{qprefix} explanation is too short', strict)
+
+        if len(questions) >= 5 and len(local_answers) < 3:
+            report(f'{prefix} uses fewer than 3 different correct-answer positions', strict)
+
+for lesson_id, count in Counter(lesson_ids).items():
+    if count > 1:
+        if lesson_id in base_lesson_ids:
+            warn(f'LEGACY: Duplicate lesson id: {lesson_id}')
+        else:
+            fail(f'Duplicate lesson id: {lesson_id}')
+
+for track_title, count in Counter(lesson_titles).items():
+    if count > 1:
+        track_id, title = track_title
+        if track_title in base_track_titles:
+            warn(f'LEGACY: Duplicate lesson title in track {track_id}: {title}')
+        else:
+            fail(f'Duplicate lesson title in track {track_id}: {title}')
+
+for qtext, count in Counter(question_texts).items():
+    if count > 1:
+        warn(f'Repeated question text: {qtext[:80]}')
+
+if answer_counts:
+    total_answers = sum(answer_counts.values())
+    for option in range(4):
+        ratio = answer_counts[option] / total_answers
+        if ratio > 0.45:
+            warn(f'Answer position {option} is overrepresented: {ratio:.1%}')
+
+for message in warnings:
+    print(f'WARNING: {message}')
+for message in errors:
+    print(f'ERROR: {message}')
+
+if errors:
+    print(f'Validation failed with {len(errors)} error(s) and {len(warnings)} warning(s).')
+    sys.exit(1)
+
+print(f'Validation passed with {len(warnings)} warning(s).')
+print(f'References registered: {len(reference_ids)}')
+print(f'Lessons checked: {len(lesson_ids)}')
+print(f'New lessons under strict validation: {new_lesson_count}')
+print(f'Questions checked: {len(question_texts)}')
