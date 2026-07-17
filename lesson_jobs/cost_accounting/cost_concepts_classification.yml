@@ -1,0 +1,29 @@
+lesson_id: cost_concepts_classification
+track_id: cost_accounting
+code: CA 2
+title: مفاهيم التكلفة الأساسية وتصنيفها
+status: approved_for_generation
+sources:
+  - id: COST-01
+    scope: Chapter 2 - An Introduction to Cost Terms and Purposes
+  - id: COST-02
+    scope: Chapter 2 - An introduction to cost terms and concepts
+required_topics:
+  - موضوع التكلفة ومحرك التكلفة
+  - التكاليف المباشرة وغير المباشرة
+  - التكاليف المتغيرة والثابتة ضمن المدى الملائم
+  - تكاليف المنتج وتكاليف الفترة
+  - التكلفة الغارقة وتكلفة الفرصة البديلة
+  - اختلاف تصنيف التكلفة باختلاف غرض القرار
+question_count: 8
+answer_distribution:
+  option_0: 2
+  option_1: 2
+  option_2: 2
+  option_3: 2
+quality_rules:
+  - لا نقل أو ترجمة حرفية من المرجعين
+  - مثال رقمي جديد من إنشاء الأكاديمية
+  - إجابة واحدة صحيحة لكل سؤال
+  - خيارات خاطئة منطقية وليست عبثية
+  - تفسير سبب صحة الإجابة
