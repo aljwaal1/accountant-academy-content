@@ -1,0 +1,27 @@
+name: Audit Academy Content
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "academy_content.json"
+      - "quality/**"
+      - "scripts/validate_academy_content.py"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate JSON and lesson quality
+        run: python scripts/validate_academy_content.py
