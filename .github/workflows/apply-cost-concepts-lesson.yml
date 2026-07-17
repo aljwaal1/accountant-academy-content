@@ -39,3 +39,5 @@ jobs:
           git add academy_content.json
           git commit -m "Add sourced lesson on cost concepts and classification"
           git push origin cost-lesson-cost-concepts
+
+# Trigger generation after the workflow exists on this branch.
