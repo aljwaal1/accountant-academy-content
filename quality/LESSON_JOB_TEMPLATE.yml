@@ -1,0 +1,46 @@
+lesson_id: ""
+track_id: ""
+code: ""
+title: ""
+level: "متوسط"
+estimated_minutes: 30
+status: "draft"
+
+allowed_sources:
+  primary: []
+  verification: []
+
+required_topics: []
+forbidden_topics: []
+
+requirements:
+  summary_points_min: 3
+  summary_points_max: 6
+  long_paragraphs_min: 4
+  practical_example_required: true
+  common_mistakes_required: false
+  question_count_min: 5
+  question_count_target: 8
+  options_per_question: 4
+
+question_mix:
+  concept: 2
+  application: 3
+  calculation: 2
+  judgment: 1
+
+answer_distribution_target:
+  option_0: 2
+  option_1: 2
+  option_2: 2
+  option_3: 2
+
+quality_gates:
+  source_facts_extracted: false
+  claims_checked_against_sources: false
+  calculations_rechecked: false
+  questions_independently_reviewed: false
+  wording_originality_checked: false
+  ready_for_publish: false
+
+notes: ""
