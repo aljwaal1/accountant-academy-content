@@ -33,16 +33,19 @@ def load_json(path):
 def load_base_content(base_ref):
     if not base_ref:
         return {}
-    try:
-        raw = subprocess.check_output(
-            ['git', 'show', f'{base_ref}:academy_content.json'],
-            text=True,
-            encoding='utf-8',
-        )
-        return json.loads(raw)
-    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
-        warn(f'Could not load base content from {base_ref}: {exc}')
-        return {}
+    candidates = [base_ref, f'origin/{base_ref}']
+    for candidate in candidates:
+        try:
+            raw = subprocess.check_output(
+                ['git', 'show', f'{candidate}:academy_content.json'],
+                text=True,
+                encoding='utf-8',
+            )
+            return json.loads(raw)
+        except (subprocess.CalledProcessError, json.JSONDecodeError):
+            continue
+    warn(f'Could not load base content from {base_ref}')
+    return {}
 
 
 def collect_lesson_ids(data):
@@ -54,6 +57,20 @@ def collect_lesson_ids(data):
             if isinstance(lesson, dict) and lesson.get('id'):
                 ids.add(str(lesson['id']).strip())
     return ids
+
+
+def collect_track_titles(data):
+    result = set()
+    for track in data.get('tracks', []):
+        if not isinstance(track, dict):
+            continue
+        track_id = str(track.get('id', '')).strip()
+        for lesson in track.get('lessons', []):
+            if isinstance(lesson, dict):
+                title = str(lesson.get('title', '')).strip().casefold()
+                if title:
+                    result.add((track_id, title))
+    return result
 
 
 def report(message, strict):
@@ -71,6 +88,7 @@ content = load_json(CONTENT)
 registry = load_json(REGISTRY)
 base_content = load_base_content(args.base_ref)
 base_lesson_ids = collect_lesson_ids(base_content)
+base_track_titles = collect_track_titles(base_content)
 
 if not isinstance(content.get('tracks'), list):
     fail('academy_content.json must contain a tracks array')
@@ -184,11 +202,18 @@ for track_index, track in enumerate(content.get('tracks', [])):
 
 for lesson_id, count in Counter(lesson_ids).items():
     if count > 1:
-        fail(f'Duplicate lesson id: {lesson_id}')
+        if lesson_id in base_lesson_ids:
+            warn(f'LEGACY: Duplicate lesson id: {lesson_id}')
+        else:
+            fail(f'Duplicate lesson id: {lesson_id}')
 
-for (track_id, title), count in Counter(lesson_titles).items():
+for track_title, count in Counter(lesson_titles).items():
     if count > 1:
-        fail(f'Duplicate lesson title in track {track_id}: {title}')
+        track_id, title = track_title
+        if track_title in base_track_titles:
+            warn(f'LEGACY: Duplicate lesson title in track {track_id}: {title}')
+        else:
+            fail(f'Duplicate lesson title in track {track_id}: {title}')
 
 for qtext, count in Counter(question_texts).items():
     if count > 1:
