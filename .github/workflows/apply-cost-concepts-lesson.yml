@@ -1,0 +1,41 @@
+name: Apply Cost Concepts Lesson
+
+on:
+  push:
+    branches:
+      - cost-lesson-cost-concepts
+    paths:
+      - "scripts/add_cost_concepts_lesson.py"
+      - ".github/workflows/apply-cost-concepts-lesson.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: cost-lesson-cost-concepts
+          fetch-depth: 0
+
+      - name: Generate lesson update
+        run: python3 scripts/add_cost_concepts_lesson.py
+
+      - name: Validate generated content
+        run: python3 scripts/validate_academy_content.py --base-ref main
+
+      - name: Commit generated content
+        run: |
+          if git diff --quiet -- academy_content.json; then
+            echo "No generated changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academy_content.json
+          git commit -m "Add sourced lesson on cost concepts and classification"
+          git push origin cost-lesson-cost-concepts
