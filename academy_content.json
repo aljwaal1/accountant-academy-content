@@ -1,5 +1,5 @@
 {
-  "version": 61,
+  "version": 62,
   "updatedAt": "2026-11-10",
   "appTitle": "أكاديمية المحاسب الدولي",
   "tracks": [
@@ -187,13 +187,7 @@
               "explanation": "الاتساق يساعد المستخدمين على مقارنة القوائم بين سنة وأخرى."
             }
           ],
-          "standardCode": "IAS 1",
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-18-presentation-and-disclosure-in-financial-statements/"
-            }
-          ]
+          "standardCode": "IAS 1"
         },
         {
           "id": "ias_2",
@@ -5947,13 +5941,7 @@
               "explanation": "السعر = 60 ÷ 0.75 = 80؛ إضافة 25% للتكلفة تعطي 75 وهامشًا 20% فقط."
             }
           ],
-          "standardCode": "CMA Part 1",
-          "references": [
-            {
-              "title": "OpenStax – تعليم محاسبي",
-              "url": "https://openstax.org/books/principles-managerial-accounting/pages/2-3-estimate-a-variable-and-fixed-cost-equation-and-predict-future-costs"
-            }
-          ]
+          "standardCode": "CMA Part 1"
         },
         {
           "id": "cma_budgeting",
@@ -14019,16 +14007,6 @@
               "answer": 0,
               "explanation": "يخفض المخصص 1,500 ويثبت عكس خسائر الائتمان بالعرض المناسب؛ لا تسجل مبيعات جديدة."
             }
-          ],
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/"
-            },
-            {
-              "title": "أمثلة معيارية – AASB",
-              "url": "https://www.aasb.gov.au/admin/file/content105/c9/IFRS9_IE_1-22.pdf"
-            }
           ]
         },
         {
@@ -15274,12 +15252,6 @@
               ],
               "answer": 0,
               "explanation": "3,000 + 20,000 − 8,000 = 15,000؛ لا يطرح تحت التشغيل مكان الإنتاج التام."
-            }
-          ],
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/"
             }
           ]
         },
@@ -16742,12 +16714,6 @@
               "answer": 0,
               "explanation": "القيمة الدفترية غارقة في المثال؛ أسعار البيع والمدفوعات والتشغيل المتغير بالقرار تدفقات ملائمة."
             }
-          ],
-          "references": [
-            {
-              "title": "OpenStax – تعليم محاسبي",
-              "url": "https://openstax.org/books/principles-managerial-accounting/pages/10-1-identify-relevant-information-for-decision-making"
-            }
           ]
         },
         {
@@ -17994,12 +17960,6 @@
               "answer": 3,
               "explanation": "300,000 + 1,300,000 + 100,000 = 1,700,000؛ لا يضاف الاستثمار المستبعد مرة ثانية."
             }
-          ],
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-10-consolidated-financial-statements/"
-            }
           ]
         },
         {
@@ -18066,12 +18026,6 @@
               ],
               "answer": 1,
               "explanation": "900,000 + 200,000 − 1,000,000 = 100,000."
-            }
-          ],
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-3-business-combinations/"
             }
           ]
         },
@@ -19257,12 +19211,6 @@
               "answer": 2,
               "explanation": "الداخلي ينقل الرصيد بين العميلين فقط؛ الخارجي والعمولة يخفضان الإجمالي 6,100."
             }
-          ],
-          "references": [
-            {
-              "title": "مرجع مهني إضافي",
-              "url": "https://www.federalreserve.gov/econres/notes/feds-notes/is-this-time-different-how-are-banks-performing-during-the-rir-increases-compared-to-2004-2006-20240412.html"
-            }
           ]
         },
         {
@@ -19331,12 +19279,6 @@
               ],
               "answer": 3,
               "explanation": "أصل القرض والفائدة المستحقة ينخفضان؛ الإيراد 1,000 سبق إثباته عند الاستحقاق."
-            }
-          ],
-          "references": [
-            {
-              "title": "المعايير الدولية – IFRS",
-              "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/"
             }
           ]
         },
