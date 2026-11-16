@@ -1,0 +1,59 @@
+name: Publish 15 professional academy lessons
+on:
+  push:
+    branches: [main]
+    paths:
+      - "curriculum_batches/**"
+      - "scripts/merge_professional_15_lessons.py"
+      - ".github/workflows/publish-professional-15-lessons.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: professional-academy-lessons
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Merge 15 lessons idempotently
+        run: python scripts/merge_professional_15_lessons.py
+      - name: Validate added lessons without rewriting legacy content
+        run: python scripts/validate_academy_content.py --base-ref HEAD
+      - name: Verify expected number and quiz schema
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          app=json.loads(Path('academy_content.json').read_text(encoding='utf-8'))
+          ids={l['id'] for t in app['tracks'] for l in t['lessons']}
+          expected=[]
+          for p in sorted(Path('curriculum_batches').glob('2026_11_16_*.json')):
+              batch=json.loads(p.read_text(encoding='utf-8'))
+              expected += [l['id'] for l in batch['lessons']]
+          assert len(expected)==15 and len(set(expected))==15
+          assert set(expected).issubset(ids), sorted(set(expected)-ids)
+          print('All 15 requested lessons validated in feed')
+          PY
+      - name: Commit tested feed to main
+        shell: bash
+        run: |
+          if git diff --quiet -- academy_content.json; then
+            echo "No feed changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academy_content.json
+          git commit -m "Publish 15 professional lessons across four academy sections"
+          git pull --rebase origin main
+          git push origin HEAD:main
