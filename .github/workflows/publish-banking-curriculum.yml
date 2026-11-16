@@ -28,7 +28,7 @@ jobs:
       - name: Merge approved bank lessons
         run: python scripts/apply_banking_curriculum.py
       - name: Validate complete academy feed
-        run: python scripts/validate_academy_content.py
+        run: python scripts/validate_academy_content.py --base-ref HEAD
       - name: Commit only when content changed
         shell: bash
         run: |
