@@ -10,7 +10,7 @@ def norm(s):
 tracks=[t for t in app["tracks"] if ("مبتد" in norm(t.get("title","")) or t.get("id") in {"beginner_accounting","accounting_for_beginners","beginners","accounting_beginners"})]
 assert len(tracks)==1, [(t.get("id"),t.get("title")) for t in app["tracks"]]
 t=tracks[0]
-aliases=[["ما هي المحاسبة","ماهي المحاسبة","مقدمة في المحاسبة","مفهوم المحاسبة","مدخل إلى المحاسبة"],["المعادلة المحاسبية","معادلة المحاسبة","معادلة الميزانية"],["الإيرادات والمصروفات","الايرادات والمصروفات","المصروفات والإيرادات"]]
+aliases=[["ما المحاسبة","ما هي المحاسبة","ماهي المحاسبة","مقدمة في المحاسبة","مفهوم المحاسبة","مدخل إلى المحاسبة"],["الفرق بين الأصول والالتزامات وحقوق الملكية","المعادلة المحاسبية","معادلة المحاسبة","معادلة الميزانية"],["الإيرادات والمصروفات","الايرادات والمصروفات","المصروفات والإيرادات"]]
 used=set()
 for item,names in zip(draft["lessons"],aliases):
     found=[l for l in t["lessons"] if any(norm(n) in norm(l.get("title","")) for n in names)]
