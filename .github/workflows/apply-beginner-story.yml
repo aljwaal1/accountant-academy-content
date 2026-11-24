@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/apply_beginner_story.py'
-      - 'pending/beginners_story_draft_2026_11_24.json'
+      - 'pending/beginners_story_full_24.json'
       - '.github/workflows/apply-beginner-story.yml'
   workflow_dispatch:
 permissions:
@@ -31,7 +31,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add academy_content.json
-          git commit -m "Update three beginner lessons with story-based explanations"
+          git commit -m "Publish 24 beginner lessons with enriched visual explanations"
           for attempt in 1 2 3 4 5; do
             if git push origin HEAD:main; then exit 0; fi
             git fetch origin main
