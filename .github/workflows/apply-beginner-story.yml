@@ -1,0 +1,35 @@
+name: Apply guarded beginner story lessons
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/apply_beginner_story.py'
+      - 'pending/beginners_story_draft_2026_11_24.json'
+      - '.github/workflows/apply-beginner-story.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: beginner-story-publish
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/apply_beginner_story.py
+      - run: python scripts/validate_academy_content.py --base-ref HEAD
+      - name: Commit validated content
+        run: |
+          if git diff --quiet -- academy_content.json; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add academy_content.json
+          git commit -m "Update three beginner lessons with story-based explanations"
+          git push origin HEAD:main
