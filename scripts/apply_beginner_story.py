@@ -49,4 +49,4 @@ if app!=original:
     app["version"]=int(app["version"])+1
     app["updatedAt"]="2026-11-24"
     p.write_text(json.dumps(app,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-print("Beginner lessons:",len(new),"Questions:",sum(len(l["questions"]) for l in new),"Other sections unchanged:",len(other))
+print("Reviewed beginner lessons:",len(new),"Questions:",sum(len(l["questions"]) for l in new),"Other sections unchanged:",len(other))
